@@ -7,6 +7,8 @@ export default defineConfig({
   build: {
     target: 'es2022',
     sourcemap: false,
+    // three.js is a separate, lazily loaded chunk (~150 kB gzipped) used only by the 3D view.
+    chunkSizeWarningLimit: 700,
   },
   test: {
     include: ['tests/**/*.test.ts'],

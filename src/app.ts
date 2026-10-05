@@ -8,6 +8,7 @@ import { mountMapToolbar } from './ui/components/mapToolbar';
 import { mountMapView } from './ui/components/mapView';
 import { mountRoutePanel } from './ui/components/routePanel';
 import { mountStartPanel } from './ui/components/startPanel';
+import { mountView3D } from './ui/components/view3d';
 import type { Ctx, Render } from './ui/components/types';
 import { applyStaticI18n } from './ui/i18n-dom';
 import { createToaster } from './ui/toast';
@@ -32,6 +33,7 @@ export function startApp(): void {
     mountMapToolbar(ctx),
     mountLegend(ctx),
     mountMapView(ctx),
+    mountView3D(ctx),
     mountRoutePanel(ctx),
     mountHazardPanel(ctx),
   ];

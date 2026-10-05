@@ -3,6 +3,7 @@ import type { AppEvent, AppState } from '../../state/store';
 import type { Building, RouteResult } from '../../types';
 import { $, h, prefersReducedMotion, svg } from '../dom';
 import { nodeTitle } from '../format';
+import { activateEdge, activateNode } from '../actions';
 import { createBadges, createShape } from '../shapes';
 import type { Ctx, Render } from './types';
 
@@ -41,7 +42,8 @@ interface EdgeEls {
 /** Hazard state as a short string, used to detect which elements changed since the last render. */
 type Snapshot = Map<string, string>;
 
-export function mountMapView({ store, toast }: Ctx): Render {
+export function mountMapView(ctx: Ctx): Render {
+  const { store } = ctx;
   const frame = $('#map-frame');
   const title = $('#map-building-name');
 
@@ -211,23 +213,12 @@ export function mountMapView({ store, toast }: Ctx): Render {
 
   // ---- Interaction -----------------------------------------------------------
 
-  function activateNode(id: string): void {
-    const state = store.getState();
-    if (state.mode === 'hazard') {
-      store.toggleNode(id);
-      return;
-    }
-    const outcome = store.selectStart(id);
-    if (outcome === 'blocked') toast(t(state.lang, 'start.cannotBlocked'), 'warn');
-    if (outcome === 'not-selectable') toast(t(state.lang, 'start.cannotExit'), 'warn');
-  }
-
   function onClick(event: Event): void {
     const target = event.target as Element;
     const nodeId = target.closest('[data-node]')?.getAttribute('data-node');
-    if (nodeId) return activateNode(nodeId);
+    if (nodeId) return activateNode(ctx, nodeId);
     const edgeId = target.closest('[data-edge]')?.getAttribute('data-edge');
-    if (edgeId && store.getState().mode === 'hazard') store.toggleEdge(edgeId);
+    if (edgeId) activateEdge(ctx, edgeId);
   }
 
   function onKeydown(event: KeyboardEvent): void {
@@ -235,7 +226,7 @@ export function mountMapView({ store, toast }: Ctx): Render {
     const nodeId = (event.target as Element).closest('[data-node]')?.getAttribute('data-node');
     if (!nodeId) return;
     event.preventDefault();
-    activateNode(nodeId);
+    activateNode(ctx, nodeId);
   }
 
   // ---- Updating --------------------------------------------------------------

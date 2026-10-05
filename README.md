@@ -68,6 +68,18 @@ No environment variables, API keys or backend are needed. Routing runs fully in 
 
 ### Bonus
 
+- **3D game view** (toggle "2D map / 3D game", built with Three.js and loaded only when opened):
+  - procedural assets — rooms with walls, doorways and furniture; junction lamp posts; exits with
+    door frames and EXIT signs; fire on blocked locations; striped barriers on blocked corridors;
+    red shutters on closed exits; flowing blue arrows on the lowest-cost route; a beacon over the
+    chosen exit; an evacuee in a hi-vis vest;
+  - the same click actions as the 2D map (set start / toggle hazards), drag to orbit, zoom, pan;
+  - **Run evacuation** walks the evacuee along the computed route;
+  - **Escape drill** mini-game: walk the evacuee yourself, one corridor at a time, under the same
+    hazard rules, then get 1–3 stars against the lowest possible cost (the answer stays hidden
+    until you finish or stop the drill; undo is allowed);
+  - the 3D view only _draws_ the result of the routing code, so the 2D and 3D views always agree.
+    If WebGL is unavailable, the 2D map keeps every feature.
 - High-contrast mode, light/dark theme following the system, keyboard-operable map and controls,
   skip link, screen-reader labels and live regions.
 - Responsive layout from phones to wide desktops (map scrolls sideways inside its frame when a
@@ -77,10 +89,11 @@ No environment variables, API keys or backend are needed. Routing runs fully in 
 
 ```
 src/
-  core/        pure logic, no DOM: validate.ts, graph.ts, routing.ts
+  core/        pure logic, no DOM: validate.ts, graph.ts, routing.ts, drill.ts (3D mini-game)
   state/       store.ts - single observable store (hazards, start, language, mode)
   i18n/        en.ts, bn.ts (typed against each other), t() helper
-  ui/          dom helpers, toast, and components/ (map, panels, legend, header)
+  ui/          dom helpers, toast, shared click actions, components/ (map, panels, legend,
+               header, 3D view HUD) and three/ (3D scene, procedural assets, evacuee)
   styles/      tokens, base, layout, components, map (design tokens + themes)
   utils/       safe localStorage wrapper
 tests/         routing, validation, store and i18n tests (+ shared helpers)
@@ -89,9 +102,10 @@ public/        favicon and samples/building.json
 
 ## Tests
 
-`npm test` runs 68 tests, including the five official sample checks, equal-cost ties (exit ties,
+`npm test` runs 78 tests, including the five official sample checks, equal-cost ties (exit ties,
 path ties, ties in the middle of a path, case sensitivity), closed exits as intermediate nodes,
-disconnected graphs, `initial_state` reset, and a check that Bangla has every English key.
+disconnected graphs, `initial_state` reset, the escape-drill rules and scoring, and a check that
+Bangla has every English key.
 
 ## Deployment (Vercel)
 
@@ -99,6 +113,9 @@ Static site only: framework preset **Vite**, build command `npm run build`, outp
 `dist`. There are no serverless functions or API routes.
 
 ## Known issues
+
+- The 3D view is mouse/touch based; keyboard users get the full feature set through the 2D map and
+  the hazard lists. The 3D view needs WebGL (a message explains when it is unavailable).
 
 - On very narrow phones the map may need a small sideways scroll to reach the right-hand column.
 - Very dense graphs (60 nodes with near-identical coordinates) can have overlapping labels;

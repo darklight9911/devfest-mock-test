@@ -1,9 +1,11 @@
+import { startDrill, stepDrill, undoDrill, type Drill, type DrillError } from '../core/drill';
 import { buildGraph, type Graph } from '../core/graph';
 import { findRoute } from '../core/routing';
 import type { ValidationIssue } from '../core/validate';
 import type { Building, Hazards, Lang, RouteResult } from '../types';
 
 export type ClickMode = 'start' | 'hazard';
+export type MapView = '2d' | '3d';
 
 /** What just happened; the UI uses it to animate only the element that changed. */
 export type AppEvent =
@@ -13,6 +15,7 @@ export type AppEvent =
   | { type: 'toggle-node'; id: string }
   | { type: 'toggle-edge'; id: string }
   | { type: 'reset' }
+  | { type: 'drill'; step: 'start' | 'move' | 'undo' | 'end' }
   | { type: 'ui' };
 
 export interface AppState {
@@ -25,6 +28,9 @@ export interface AppState {
   hazards: Hazards;
   lang: Lang;
   mode: ClickMode;
+  view: MapView;
+  /** The escape-drill game in the 3D view; null when no drill is running. */
+  drill: Drill | null;
   highContrast: boolean;
   lastEvent: AppEvent;
 }
@@ -64,6 +70,8 @@ export function createStore(initial: Partial<Pick<AppState, 'lang' | 'highContra
     hazards: emptyHazards(),
     lang: initial.lang ?? 'en',
     mode: 'start',
+    view: '2d',
+    drill: null,
     highContrast: initial.highContrast ?? false,
     lastEvent: { type: 'init' },
   };
@@ -98,6 +106,7 @@ export function createStore(initial: Partial<Pick<AppState, 'lang' | 'highContra
       state.importIssues = null;
       state.start = null;
       state.hazards = hazardsFromBuilding(building);
+      state.drill = null;
       emit({ type: 'load' });
     },
 
@@ -113,6 +122,7 @@ export function createStore(initial: Partial<Pick<AppState, 'lang' | 'highContra
       if (!node || node.type === 'exit') return 'not-selectable';
       if (state.hazards.blockedNodes.has(id)) return 'blocked';
       state.start = id;
+      state.drill = null; // a new start ends any drill
       emit({ type: 'start', id });
       return 'ok';
     },
@@ -122,12 +132,14 @@ export function createStore(initial: Partial<Pick<AppState, 'lang' | 'highContra
       const node = state.graph?.nodes.get(id);
       if (!node) return;
       toggle(node.type === 'exit' ? state.hazards.closedExits : state.hazards.blockedNodes, id);
+      state.drill = null; // changed hazards invalidate the drill's score
       emit({ type: 'toggle-node', id });
     },
 
     toggleEdge(id: string): void {
       if (!state.graph?.edges.has(id)) return;
       toggle(state.hazards.blockedEdges, id);
+      state.drill = null;
       emit({ type: 'toggle-edge', id });
     },
 
@@ -135,6 +147,7 @@ export function createStore(initial: Partial<Pick<AppState, 'lang' | 'highContra
     resetHazards(): void {
       if (!state.building) return;
       state.hazards = hazardsFromBuilding(state.building);
+      state.drill = null;
       emit({ type: 'reset' });
     },
 
@@ -148,9 +161,46 @@ export function createStore(initial: Partial<Pick<AppState, 'lang' | 'highContra
       emit({ type: 'ui' });
     },
 
+    setView(view: MapView): void {
+      state.view = view;
+      if (view === '2d') state.drill = null; // the drill is played in the 3D view
+      emit({ type: 'ui' });
+    },
+
     setHighContrast(on: boolean): void {
       state.highContrast = on;
       emit({ type: 'ui' });
+    },
+
+    /** Starts an escape drill from the current start. Needs a reachable exit to score against. */
+    startDrill(): boolean {
+      const route = getRoute();
+      if (route.status !== 'ok') return false;
+      state.drill = startDrill(route.start, route.path, route.totalCost);
+      emit({ type: 'drill', step: 'start' });
+      return true;
+    },
+
+    /** Moves the drill evacuee; returns why a move was refused, or null when it succeeded. */
+    drillStep(to: string): DrillError | null {
+      if (!state.drill || !state.graph) return null;
+      const result = stepDrill(state.graph, state.hazards, state.drill, to);
+      if (!result.ok) return result.reason;
+      state.drill = result.drill;
+      emit({ type: 'drill', step: 'move' });
+      return null;
+    },
+
+    drillUndo(): void {
+      if (!state.drill || !state.graph) return;
+      state.drill = undoDrill(state.graph, state.drill);
+      emit({ type: 'drill', step: 'undo' });
+    },
+
+    endDrill(): void {
+      if (!state.drill) return;
+      state.drill = null;
+      emit({ type: 'drill', step: 'end' });
     },
   };
 }

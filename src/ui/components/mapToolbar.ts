@@ -23,7 +23,10 @@ export function mountMapToolbar({ store, toast }: Ctx): Render {
     for (const button of buttons) {
       button.setAttribute('aria-checked', String(button.dataset.mode === state.mode));
     }
-    hint.textContent = t(state.lang, state.mode === 'start' ? 'mode.hintStart' : 'mode.hintHazard');
+    const drillActive = state.drill !== null && !state.drill.escaped;
+    hint.textContent = drillActive
+      ? t(state.lang, 'game.drillIntro')
+      : t(state.lang, state.mode === 'start' ? 'mode.hintStart' : 'mode.hintHazard');
     for (const button of [reset, ...buttons]) button.disabled = state.building === null;
   };
 }

@@ -85,8 +85,36 @@
 
         <section class="card area-map" id="map-section" aria-labelledby="map-heading" tabindex="-1">
           <div class="card-head">
-            <h2 id="map-heading" data-i18n="map.heading">Building map</h2>
-            <span id="map-building-name" class="muted"></span>
+            <div class="card-title">
+              <h2 id="map-heading" data-i18n="map.heading">Building map</h2>
+              <span id="map-building-name" class="muted"></span>
+            </div>
+            <div
+              class="segmented"
+              role="radiogroup"
+              id="view-switch"
+              data-i18n-aria="view.label"
+              aria-label="Map view"
+            >
+              <button
+                type="button"
+                role="radio"
+                data-view="2d"
+                aria-checked="true"
+                data-i18n="view.2d"
+              >
+                2D map
+              </button>
+              <button
+                type="button"
+                role="radio"
+                data-view="3d"
+                aria-checked="false"
+                data-i18n="view.3d"
+              >
+                3D game
+              </button>
+            </div>
           </div>
           <div class="toolbar">
             <div
@@ -120,10 +148,41 @@
             </button>
           </div>
           <p class="hint" id="mode-hint"></p>
-          <div class="map-frame" id="map-frame" data-mode="start"></div>
-          <div class="legend">
-            <h3 data-i18n="legend.heading">Legend</h3>
-            <ul id="legend-list"></ul>
+          <div id="view2d" class="view2d">
+            <div class="map-frame" id="map-frame" data-mode="start"></div>
+            <div class="legend">
+              <h3 data-i18n="legend.heading">Legend</h3>
+              <ul id="legend-list"></ul>
+            </div>
+          </div>
+          <div id="view3d" class="view3d" hidden>
+            <div class="btn-row game-toolbar">
+              <button type="button" class="btn btn-primary" id="game-run" data-i18n="game.run">
+                Run evacuation
+              </button>
+              <button type="button" class="btn" id="game-drill" aria-pressed="false">
+                Escape drill
+              </button>
+              <button type="button" class="btn" id="game-undo" data-i18n="game.undo">
+                Undo step
+              </button>
+              <button type="button" class="btn btn-ghost" id="game-camera" data-i18n="game.camera">
+                Reset camera
+              </button>
+            </div>
+            <div class="game-stage" id="game-stage">
+              <p class="game-message" id="game-message"></p>
+              <p class="game-status" id="game-status" aria-live="polite" hidden></p>
+              <div
+                class="game-result"
+                id="game-result"
+                role="dialog"
+                aria-live="polite"
+                hidden
+              ></div>
+            </div>
+            <p class="hint" data-i18n="view3d.controls"></p>
+            <p class="hint" data-i18n="view3d.legend"></p>
           </div>
         </section>
 
