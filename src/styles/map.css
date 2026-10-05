@@ -1,0 +1,283 @@
+/* Everything is sized in "px x --s" where --s is SVG units per CSS pixel (set per map in JS),
+   so strokes and text keep the same on-screen size however large the dataset's coordinates are. */
+.map-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.map-svg text {
+  font-family: var(--font);
+}
+
+/* ---- Corridors ---------------------------------------------------------------- */
+.edge-line {
+  fill: none;
+  stroke: var(--edge);
+  stroke-width: calc(var(--s) * 3px);
+  stroke-linecap: round;
+  transition:
+    stroke 0.2s var(--ease),
+    opacity 0.2s var(--ease);
+}
+
+.edge-hit {
+  stroke: transparent;
+  stroke-width: calc(var(--s) * 24px);
+  stroke-linecap: round;
+  pointer-events: stroke;
+}
+
+.edge-pill {
+  fill: var(--surface);
+  stroke: var(--edge);
+  stroke-width: calc(var(--s) * 1.5px);
+  transition:
+    fill 0.2s var(--ease),
+    stroke 0.2s var(--ease);
+}
+
+.edge-cost-body {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.edge-cost-text {
+  fill: var(--text);
+  font-size: calc(var(--s) * 12px);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.edge-x {
+  display: none;
+  fill: none;
+  stroke: var(--blocked-stroke);
+  stroke-width: calc(var(--s) * 2.5px);
+  stroke-linecap: round;
+}
+
+.edge.is-blocked .edge-line {
+  stroke: var(--blocked-stroke);
+  stroke-dasharray: calc(var(--s) * 8px) calc(var(--s) * 7px);
+}
+
+.is-blocked .edge-pill {
+  fill: var(--blocked-fill);
+  stroke: var(--blocked-stroke);
+}
+
+.is-blocked .edge-cost-text {
+  text-decoration: line-through;
+}
+
+.is-blocked .edge-x {
+  display: block;
+}
+
+.on-route .edge-pill {
+  stroke: var(--route);
+  stroke-width: calc(var(--s) * 2.5px);
+}
+
+.edge.is-inactive .edge-line {
+  opacity: 0.4;
+  stroke-dasharray: calc(var(--s) * 2px) calc(var(--s) * 6px);
+}
+
+.is-inactive .edge-pill {
+  opacity: 0.55;
+}
+
+/* ---- Route --------------------------------------------------------------------- */
+.route-path {
+  fill: none;
+  stroke: var(--route);
+  stroke-width: calc(var(--s) * 7px);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  opacity: 0.9;
+}
+
+/* In the legend the route sample is a plain line, not a normalised path. */
+.legend-icon .route-path {
+  stroke-dasharray: none;
+}
+
+/* ---- Nodes --------------------------------------------------------------------- */
+.node {
+  outline: none;
+}
+
+.node-body {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.shape {
+  stroke-width: calc(var(--s) * 2.5px);
+  transition:
+    fill 0.2s var(--ease),
+    stroke 0.2s var(--ease);
+}
+
+.type-room .shape {
+  fill: var(--room-fill);
+  stroke: var(--room-stroke);
+}
+
+.type-junction .shape {
+  fill: var(--junction-fill);
+  stroke: var(--junction-stroke);
+}
+
+.type-exit .shape {
+  fill: var(--exit-fill);
+  stroke: var(--exit-stroke);
+}
+
+.node-id {
+  fill: var(--text);
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}
+
+.node-label {
+  fill: var(--text);
+  font-size: calc(var(--s) * 12.5px);
+  font-weight: 600;
+  text-anchor: middle;
+  paint-order: stroke;
+  stroke: var(--map-bg);
+  stroke-width: calc(var(--s) * 4px);
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.ring {
+  fill: none;
+  stroke-width: calc(var(--s) * 3.5px);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity 0.2s var(--ease);
+  pointer-events: none;
+}
+
+.node.is-start .ring {
+  opacity: 1;
+  stroke: var(--start);
+}
+
+.node.is-destination .ring {
+  opacity: 1;
+  stroke: var(--route);
+}
+
+.node.on-route .shape {
+  stroke: var(--route);
+  stroke-width: calc(var(--s) * 3.5px);
+}
+
+.node.is-destination .shape {
+  stroke: var(--exit-stroke);
+}
+
+/* Hazard states: colour AND a badge, never colour alone. */
+.node.is-blocked .shape {
+  fill: var(--blocked-fill);
+  stroke: var(--blocked-stroke);
+}
+
+.node.is-closed .shape {
+  fill: var(--closed-fill);
+  stroke: var(--closed-stroke);
+  stroke-dasharray: calc(var(--s) * 5px) calc(var(--s) * 3px);
+}
+
+.badge {
+  display: none;
+  pointer-events: none;
+}
+
+.badge circle {
+  stroke: var(--map-bg);
+  stroke-width: calc(var(--s) * 1.5px);
+}
+
+.badge path {
+  fill: none;
+  stroke: var(--map-bg);
+  stroke-width: calc(var(--s) * 2.4px);
+  stroke-linecap: round;
+}
+
+.badge-blocked circle {
+  fill: var(--blocked-stroke);
+}
+
+.badge-closed circle {
+  fill: var(--closed-stroke);
+}
+
+.node.is-blocked .badge-blocked,
+.node.is-closed .badge-closed {
+  display: block;
+}
+
+/* ---- Interaction ---------------------------------------------------------------- */
+.map-frame[data-mode='start'] .edge-hit {
+  pointer-events: none;
+}
+
+.map-frame[data-mode='start'] .type-room,
+.map-frame[data-mode='start'] .type-junction,
+.map-frame[data-mode='hazard'] .node,
+.map-frame[data-mode='hazard'] .edge,
+.map-frame[data-mode='hazard'] .edge-label {
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .map-frame .node:hover .shape {
+    stroke-width: calc(var(--s) * 3.5px);
+  }
+
+  .map-frame[data-mode='hazard'] .edge:hover .edge-line {
+    stroke-width: calc(var(--s) * 4.5px);
+  }
+}
+
+.node:focus-visible .shape {
+  stroke: var(--focus);
+  stroke-width: calc(var(--s) * 4.5px);
+}
+
+/* Legend swatches reuse the map rules above but have no frame to carry data-mode. */
+.legend-icon .node {
+  cursor: default;
+}
+
+/* High-contrast mode: heavier outlines, bolder text. */
+:root[data-contrast='high'] .shape {
+  stroke-width: calc(var(--s) * 3.5px);
+}
+
+:root[data-contrast='high'] .edge-line {
+  stroke-width: calc(var(--s) * 4px);
+}
+
+:root[data-contrast='high'] .node-label,
+:root[data-contrast='high'] .edge-cost-text {
+  font-weight: 800;
+}

@@ -1,0 +1,123 @@
+/* Design tokens. Components only use these variables, so themes are a matter of redefining them. */
+:root {
+  --font:
+    'Inter Variable', 'Noto Sans Bengali Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --radius: 14px;
+  --radius-sm: 9px;
+
+  --bg: #f1f4f9;
+  --surface: #ffffff;
+  --surface-2: #f6f8fc;
+  --text: #0f172a;
+  --muted: #55627a;
+  --border: #d7deea;
+  --focus: #1d4ed8;
+
+  --accent: #2563eb;
+  --accent-strong: #1e40af;
+  --accent-soft: #e6eeff;
+  --on-accent: #ffffff;
+
+  --ok: #166534;
+  --ok-soft: #e4f6ea;
+  --danger: #b91c1c;
+  --danger-soft: #fde8e8;
+  --warn: #8a4b00;
+  --warn-soft: #fff1d6;
+
+  /* Map */
+  --map-bg: #fbfcfe;
+  --edge: #8592a8;
+  --room-fill: #e4e7ff;
+  --room-stroke: #4338ca;
+  --junction-fill: #edf0f6;
+  --junction-stroke: #556078;
+  --exit-fill: #d9f3e1;
+  --exit-stroke: #15803d;
+  --blocked-fill: #fbd9d9;
+  --blocked-stroke: #c62828;
+  --closed-fill: #d3d8e2;
+  --closed-stroke: #2f3a52;
+  --route: #2563eb;
+  --start: #e08a00;
+
+  --shadow: 0 1px 2px rgb(15 23 42 / 6%), 0 6px 20px rgb(15 23 42 / 6%);
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0c1220;
+    --surface: #141c2e;
+    --surface-2: #1a2438;
+    --text: #e8edf7;
+    --muted: #9aa8c1;
+    --border: #2b3853;
+    --focus: #8ab4ff;
+
+    --accent: #5b8def;
+    --accent-strong: #8ab4ff;
+    --accent-soft: #1d2d52;
+    --on-accent: #0b1020;
+
+    --ok: #6ee7a0;
+    --ok-soft: #12301f;
+    --danger: #ff8a8a;
+    --danger-soft: #3a1618;
+    --warn: #ffc56b;
+    --warn-soft: #3a2a0c;
+
+    --map-bg: #0f1729;
+    --edge: #70809e;
+    --room-fill: #28306b;
+    --room-stroke: #9aa5ff;
+    --junction-fill: #26324a;
+    --junction-stroke: #a0adc6;
+    --exit-fill: #153b27;
+    --exit-stroke: #5fdc92;
+    --blocked-fill: #4a1b1e;
+    --blocked-stroke: #ff7b7b;
+    --closed-fill: #333c52;
+    --closed-stroke: #c4cce0;
+    --route: #6aa0ff;
+    --start: #ffb13d;
+
+    --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 6px 20px rgb(0 0 0 / 30%);
+  }
+}
+
+/* High-contrast mode: maximum separation, heavier outlines (see map.css). Overrides dark mode too. */
+:root[data-contrast='high'] {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #ffffff;
+  --text: #000000;
+  --muted: #1f1f1f;
+  --border: #000000;
+  --focus: #b30000;
+  --accent: #0033cc;
+  --accent-strong: #001a80;
+  --accent-soft: #e0e8ff;
+  --on-accent: #ffffff;
+  --ok: #004d1a;
+  --ok-soft: #dcffe8;
+  --danger: #8a0000;
+  --danger-soft: #ffe0e0;
+  --warn: #5c3300;
+  --warn-soft: #fff0c2;
+  --map-bg: #ffffff;
+  --edge: #000000;
+  --room-fill: #ffffff;
+  --room-stroke: #000000;
+  --junction-fill: #ffffff;
+  --junction-stroke: #000000;
+  --exit-fill: #c9ffd9;
+  --exit-stroke: #004d1a;
+  --blocked-fill: #ffd0d0;
+  --blocked-stroke: #a30000;
+  --closed-fill: #cfcfcf;
+  --closed-stroke: #000000;
+  --route: #0033cc;
+  --start: #b35c00;
+  --shadow: none;
+}

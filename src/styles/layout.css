@@ -1,0 +1,103 @@
+.app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: clamp(12px, 3vw, 28px);
+}
+
+.app-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  margin-bottom: 10px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-mark {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  color: var(--accent);
+}
+
+.brand h1 {
+  font-size: clamp(1.25rem, 3.4vw, 1.6rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.tagline {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.header-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.disclaimer {
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--warn);
+  border-radius: var(--radius-sm);
+  background: var(--warn-soft);
+  color: var(--warn);
+  font-size: 0.85rem;
+}
+
+/* Mobile first: one column, map right after the import card. */
+.layout {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'import'
+    'map'
+    'start'
+    'route'
+    'hazards';
+}
+
+.area-import {
+  grid-area: import;
+}
+.area-map {
+  grid-area: map;
+}
+.area-start {
+  grid-area: start;
+}
+.area-route {
+  grid-area: route;
+}
+.area-hazards {
+  grid-area: hazards;
+}
+
+@media (min-width: 980px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 400px);
+    grid-template-areas:
+      'map import'
+      'map start'
+      'map route'
+      'map hazards';
+    align-items: start;
+  }
+
+  /* The map stays in view while the side panels scroll. */
+  .area-map {
+    position: sticky;
+    top: 16px;
+  }
+}

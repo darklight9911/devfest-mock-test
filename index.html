@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="Smart Escape - an interactive evacuation route simulator. Import a building, block hazards and see the lowest-cost route to an open exit."
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Smart Escape — Interactive evacuation route simulator</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#map-section" data-i18n="a11y.skip">Skip to the map</a>
+
+    <div class="app">
+      <header class="app-header">
+        <div class="brand">
+          <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+            <rect width="64" height="64" rx="14" fill="currentColor" />
+            <path
+              d="M14 46 L28 30 L36 38 L50 18"
+              fill="none"
+              stroke="#fff"
+              stroke-width="6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <circle cx="50" cy="18" r="6" fill="#22c55e" stroke="#fff" stroke-width="3" />
+          </svg>
+          <div>
+            <h1 data-i18n="app.title">Smart Escape</h1>
+            <p class="tagline" data-i18n="app.subtitle">Interactive evacuation route simulator</p>
+          </div>
+        </div>
+        <div class="header-controls">
+          <div
+            class="segmented"
+            role="group"
+            id="lang-switch"
+            data-i18n-aria="lang.label"
+            aria-label="Language"
+          >
+            <button type="button" data-lang="en" lang="en" aria-pressed="true">English</button>
+            <button type="button" data-lang="bn" lang="bn" aria-pressed="false">বাংলা</button>
+          </div>
+          <button
+            type="button"
+            id="contrast-toggle"
+            class="btn btn-ghost"
+            aria-pressed="false"
+            data-i18n="contrast.label"
+          >
+            High contrast
+          </button>
+        </div>
+      </header>
+
+      <p class="disclaimer" role="note" data-i18n="app.disclaimer"></p>
+
+      <main class="layout">
+        <section class="card area-import" aria-labelledby="import-heading">
+          <h2 id="import-heading" data-i18n="import.heading">1. Import building</h2>
+          <div class="dropzone" id="dropzone">
+            <p data-i18n="import.drop">Drop a building.json file here, or</p>
+            <div class="btn-row">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="choose-file"
+                data-i18n="import.choose"
+              >
+                Choose file
+              </button>
+              <button type="button" class="btn" id="load-sample" data-i18n="import.sample">
+                Load sample building
+              </button>
+            </div>
+            <input type="file" id="file-input" accept=".json,application/json" hidden />
+            <p class="hint" data-i18n="import.hint"></p>
+          </div>
+          <div id="import-status" class="import-status" aria-live="polite"></div>
+        </section>
+
+        <section class="card area-map" id="map-section" aria-labelledby="map-heading" tabindex="-1">
+          <div class="card-head">
+            <h2 id="map-heading" data-i18n="map.heading">Building map</h2>
+            <span id="map-building-name" class="muted"></span>
+          </div>
+          <div class="toolbar">
+            <div
+              class="segmented"
+              role="radiogroup"
+              id="mode-switch"
+              data-i18n-aria="mode.label"
+              aria-label="Map click action"
+            >
+              <button
+                type="button"
+                role="radio"
+                data-mode="start"
+                aria-checked="true"
+                data-i18n="mode.start"
+              >
+                Set start
+              </button>
+              <button
+                type="button"
+                role="radio"
+                data-mode="hazard"
+                aria-checked="false"
+                data-i18n="mode.hazard"
+              >
+                Toggle hazard
+              </button>
+            </div>
+            <button type="button" class="btn" id="reset-hazards" data-i18n="toolbar.reset">
+              Reset hazards
+            </button>
+          </div>
+          <p class="hint" id="mode-hint"></p>
+          <div class="map-frame" id="map-frame" data-mode="start"></div>
+          <div class="legend">
+            <h3 data-i18n="legend.heading">Legend</h3>
+            <ul id="legend-list"></ul>
+          </div>
+        </section>
+
+        <section class="card area-start" aria-labelledby="start-heading">
+          <h2 id="start-heading" data-i18n="start.heading">2. Choose your start</h2>
+          <label class="field-label" for="start-select" data-i18n="start.label"
+            >Starting location</label
+          >
+          <select id="start-select" class="select" disabled></select>
+        </section>
+
+        <section class="card area-route" aria-labelledby="route-heading">
+          <h2 id="route-heading" data-i18n="route.heading">3. Evacuation route</h2>
+          <div id="route-result" aria-live="polite" aria-atomic="true"></div>
+        </section>
+
+        <section class="card area-hazards" aria-labelledby="hazards-heading">
+          <h2 id="hazards-heading" data-i18n="hazards.heading">4. Hazards</h2>
+          <p class="hint" data-i18n="hazards.intro"></p>
+          <div id="hazard-lists"></div>
+        </section>
+      </main>
+    </div>
+
+    <div id="toast-region" role="status" aria-live="polite"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
